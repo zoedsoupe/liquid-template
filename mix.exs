@@ -16,7 +16,8 @@ defmodule Liquid.MixProject do
             liquid_auth: :permanent,
             liquid_accounts: :permanent,
             liquid_operations: :permanent,
-            proxy_web: :permanent
+            proxy_web: :permanent,
+            release: :temporary
           ]
         ]
       ]

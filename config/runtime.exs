@@ -10,7 +10,7 @@ import Config
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 if System.get_env("PHX_SERVER") do
-  config :liquid, LiquidWeb.Endpoint, server: true
+  config :proxy_web, ProxyWeb.Endpoint, server: true
 end
 
 if config_env() == :prod do
