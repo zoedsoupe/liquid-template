@@ -10,7 +10,7 @@
       pkgs.mkShell {
         name = "liquid-dev";
         packages = with pkgs;
-          [erlangR26.elixir_1_15 redpanda]
+          [erlangR26.elixir_1_15 redpanda gnumake gcc postgresql]
           ++ lib.optional stdenv.isDarwin [
             darwin.apple_sdk.frameworks.CoreServices
             darwin.apple_sdk.frameworks.CoreFoundation
