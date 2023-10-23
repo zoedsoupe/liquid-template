@@ -4,7 +4,9 @@ services:
   pescarte:
     build:
       context: .
+      target: releaser
     container_name: liquid_dev
+    command: ["mix", "dev"]
     ports:
       - 4000:4000
     depends_on:
