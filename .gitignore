@@ -26,3 +26,5 @@ erl_crash.dump
 liquid-*.tar
 
 .env
+
+/assets/node_modules/

@@ -14,7 +14,17 @@ config :liquid, LiquidWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "RRAVO4QBlitT2HujaRWbPmSH0BUAiJBP7Wn2tOk1SM4DevqLx6TQDUnhnseq8S9y"
+  secret_key_base: "RRAVO4QBlitT2HujaRWbPmSH0BUAiJBP7Wn2tOk1SM4DevqLx6TQDUnhnseq8S9y",
+  watchers: [
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    sass: {DartSass, :install_and_run, [:default, ~w(--watch)]}
+  ],
+  live_reload: [
+    patterns: [
+      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"lib/liquid_web/(controllers|live|components)/.*(ex|heex)$"
+    ]
+  ]
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
