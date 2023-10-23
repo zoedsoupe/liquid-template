@@ -8,7 +8,7 @@ Sobre mim
 
 ![Zoey Pessanha](./assets/profile.png)
 
-Olá! Eu sou Zoey Pessanha, uma entusiasta de Elixir e engenheira de software com uma paixão ardente pela programação funcional e desenvolvimento web. Meu foco principal é a linguagem Elixir e o framework Phoenix, e estou animado para compartilhar meu conhecimento e experiência com você neste workshop.
+Olá! Eu sou Zoey Pessanha, uma entusiasta de Elixir e engenheira de software com uma paixão ardente pela programação funcional e desenvolvimento web. Meu foco principal é a linguagem Elixir e o framework Phoenix, e estou animada para compartilhar meu conhecimento e experiência com você neste workshop.
 
 ## Experiências
 
@@ -178,16 +178,20 @@ Liquid API
 
 Estrutura do projeto:
 
+<!-- column_layout: [2, 4] -->
+
+<!-- column: 0 -->
+- separado em contextos
+- cada contexto é idependente dos outros
+- cada contexto fornece uma API pública
+- configuração específica para cada ambiente (prod, dev, test)
+
+<!-- column: 1 -->
 ```sh
 .
 ├── Dockerfile
+├── Insomnia_2023-10-21.json
 ├── README.md
-├── apps
-│   ├── liquid_accounts
-│   ├── liquid_auth
-│   ├── liquid_operations
-│   ├── proxy_web
-│   └── release
 ├── config
 │   ├── config.exs
 │   ├── dev.exs
@@ -195,77 +199,48 @@ Estrutura do projeto:
 │   ├── runtime.exs
 │   └── test.exs
 ├── docker-compose.yml
-├── flake.lock
-├── flake.nix
+├── lib
+│   ├── liquid
+│   │   ├── accounts
+│   │   ├── application.ex
+│   │   ├── auth
+│   │   ├── operations
+│   │   ├── release.ex
+│   │   └── repo.ex
+│   ├── liquid_web
+│   │   ├── controllers
+│   │   ├── endpoint.ex
+│   │   ├── router.ex
+│   │   └── verify_header.ex
+│   └── liquid_web.ex
 ├── mix.exs
 ├── mix.lock
-└── rel
-```
-
-- separado em microsserviços
-- cada aplicação é idependente
-- monorepo abriga todo o código fonte
-- configuração específica para cada ambiente (prod, dev, test)
-
-<!-- end_slide -->
-
-Liquid API
----
-
-Cada app é dividida pela seguinte estrutura:
-
-```sh
-apps/liquid_auth/
-├── README.md
-├── lib
-│   └── liquid
-│       ├── auth
-│       │   ├── application.ex
-│       │   └── repo.ex
-│       ├── auth.ex
-│       ├── auth_web
-│       │   ├── controllers
-│       │   │   └── error_json.ex
-│       │   ├── endpoint.ex
-│       │   └── router.ex
-│       └── auth_web.ex
-├── mix.exs
 ├── priv
 │   └── repo
-│       ├── migrations
-│       └── seeds.exs
+│       └── migrations
+├── rel
 └── test
 ```
 
-<!-- end_slide -->
-
-Liquid API
----
-
-## Release
-
-Aplicação que configura o banco de dados para ser conectado quando o binário final da aplicação for executado.
-
-## Proxy Web
-
-- define um caminho padrão na url
-- encaminha caminhos customizados para respectivas aplicações
-
-Exemplo:
-
-- `http://localhost:4000/api` - vai para o app padrão `:liquid_auth`
-- `http://localhost/api/accounts` - encaminha para o app `:liquid_accounts`
-- `http://localhost/api/operations` - encaminha para o app `:liquid_operations`
+<!-- reset_layout -->
 
 <!-- end_slide -->
 
 Liquid Auth
 ---
 
+<!-- column_layout: [2, 2, 2] -->
+
+<!-- column: 1 -->
 Vamos servir os seguintes endpoints:
 
 - `POST` `/api/login`
 
+<!-- reset_layout -->
+
+<!-- column_layout: [3, 4] -->
+
+<!-- column: 0 -->
 E os seguintes modelos:
 
 ## User
@@ -283,6 +258,7 @@ E os seguintes modelos:
 
 Primeiro vamos criar a migration com o comando `mix ecto.gen.migration create_user`
 
+<!-- column: 1 -->
 ```elixir
 defmodule Liquid.Repo.Migrations.CreateUser do
   use Ecto.Migration
@@ -300,11 +276,16 @@ defmodule Liquid.Repo.Migrations.CreateUser do
 end
 ```
 
+<!-- reset_layout -->
+
 <!-- end_slide -->
 
 Liquid Auth
 ---
 
+<!-- column_layout: [5, 5] -->
+
+<!-- column: 0 -->
 Agora vamos criar o modelo, criando um arquivo `user.ex` dentro da pasta `liquid_auth/lib/liquid/auth/models`
 
 ```elixir
@@ -326,7 +307,14 @@ defmodule Liquid.Auth.Models.User do
 
     timestamps()
   end
+end
+```
 
+<!-- column: 1 -->
+E tbm funções para manipular esse modelo:
+
+```elixir
+# ...
   def changeset(user \\ %__MODULE__{}, attrs) do
     user
     |> cast(attrs, ~w[cpf first_name last_name password]a)
@@ -344,14 +332,19 @@ defmodule Liquid.Auth.Models.User do
       changeset
     end
   end
-end
+# ...
 ```
+
+<!-- reset_layout -->
 
 <!-- end_slide -->
 
 Liquid Auth
 ---
 
+<!-- column_layout: [4, 4] -->
+
+<!-- column: 0 -->
 Agora vamos criar as funções para interagir com um `user`. No arquivo `liquid_auth/lib/liquid/auth.ex`:
 
 ```elixir
@@ -374,12 +367,19 @@ defmodule Liquid.Auth do
       {:error, :not_found}
     end
   end
+end
+```
 
+<!-- column: 1 -->
+
+```elixir
+# ...
   def fetch_user_by_cpf_and_password(cpf, password) do
     query = from(u in User, select: u, where: u.cpf == ^cpf)
     maybe_user = Repo.one(query)
 
-    if maybe_user && Bcrypt.verify_pass(password, maybe_user.hash_password) do
+    if maybe_user &&
+      Bcrypt.verify_pass(password, maybe_user.hash_password) do
       {:ok, maybe_user}
     else
       {:error, :invalid_credentials}
@@ -391,8 +391,10 @@ defmodule Liquid.Auth do
   end
 
   defdelegate delete_user(user), to: Repo, as: :delete
-end
+# ...
 ```
+
+<!-- reset_layout -->
 
 <!-- end_slide -->
 
@@ -403,17 +405,22 @@ Agora que temos como gerenciar um `User` e uma, vamos implementar o Controller, 
 
 Crie um arquivo `user_controller.ex` em `liquid_auth/lib/liquid/auth_web/controllers`:
 
+<!-- column_layout: [4, 4] -->
+
+<!-- column: 0 -->
 ```elixir
 defmodule Liquid.UserController do
   use LiquidWeb, :controller
 
   alias Liquid.Auth
+  alias Phoenix.Token
 
   @salt "token-usuario-liquid-api"
 
   def login(conn, %{"cpf" => cpf, "password" => password}) do
-    with {:ok, user} <- Auth.fetch_user_by_cpf_and_password(cpf, password) do
-      token = Phoenix.Token.encode(LiquidWeb.Endpoint, @salt, user.id)
+    with {:ok, user} <-
+        Auth.fetch_user_by_cpf_and_password(cpf, password) do
+      token = Token.encode(LiquidWeb.Endpoint, @salt, user.id)
       render(conn, :show, token: token, user: user)
     end
   end
@@ -429,7 +436,12 @@ defmodule Liquid.UserController do
       render(conn, :show, user: user)
     end
   end
+end
+```
 
+<!-- column: 1 -->
+```elixir
+# ...
   def update(conn, %{"id" => user_id} = params) do
     with {:ok, user} <- Auth.fetch_user(user_id),
          {:ok, user} <- Auth.update_user(user, params) do
@@ -443,7 +455,7 @@ defmodule Liquid.UserController do
       render(conn, :show, user: user)
     end
   end
-end
+# ...
 ```
 
 Tambem é preciso implementar um módulo para saber como os dados devem ser retornados na API:
@@ -455,6 +467,8 @@ defmodule LiquidWeb.UserJSON do
   end
 end
 ```
+
+<!-- reset_layout -->
 
 <!-- end_slide -->
 
@@ -504,6 +518,9 @@ Em `lib/liquid_web/verify_header.ex`:
 Liquid Auth
 ---
 
+<!-- column_layout: [5, 5] -->
+
+<!-- column: 0 -->
 ```elixir
 defmodule LiquidWeb.VerifyHeader do
   import Plug.Conn
@@ -516,14 +533,8 @@ defmodule LiquidWeb.VerifyHeader do
   def init(opts), do: opts
 
   def call(conn, _opts) do
-    api_key = List.first(get_req_header(conn, "x-api-key"))
     token = fetch_token(get_req_header(conn, "authorization"))
-
-    cond do
-      !token and !api_key -> unauthorized(conn)
-      token -> maybe_put_current_user(conn, token)
-      api_key -> Liquid.Auth.valid_api_key?(api_key) && conn || unauthorized(conn)
-    end
+    maybe_put_current_user(conn, token)
   end
 
   defp maybe_put_current_user(conn, token) do
@@ -534,7 +545,12 @@ defmodule LiquidWeb.VerifyHeader do
       _ -> unauthorized(conn)
     end
   end
+end
+```
 
+<!-- column: 1 -->
+```elixir
+# ...
   defp unauthorized(conn) do
     conn
     |> put_status(:unauthorized)
@@ -551,12 +567,14 @@ defmodule LiquidWeb.VerifyHeader do
 
   defp verify_token(conn, token),
     do: Phoenix.Token.verify(conn, salt(), token, max_age: @one_day)
-end
+# ...
 ```
 
 E em `lib/liquid_web/router.ex` adicionar esse "plug" na lista de pipelines da API.
 
 Prontinho! Agora ao acessar as rotas que passam na pipeline `:auth` vão precisar de autenticação.
+
+<!-- reset_layout -->
 
 <!-- end_slide -->
 
@@ -646,14 +664,9 @@ defmodule Liquid.Accounts do
     account = Repo.one(query)
 
     cond do
-      account && mode == :model ->
-        {:ok, account}
-
-      account && mode == :schema ->
-        UserAccountAdapter.internal_to_external(account.owner, account)
-
-      !account ->
-        {:error, :not_found}
+      account && mode == :model -> {:ok, account}
+      account && mode == :schema -> internal_to_external(account.owner, account)
+      !account -> {:error, :not_found}
     end
   end
 
@@ -661,7 +674,7 @@ defmodule Liquid.Accounts do
     query = from(a in BankAccount, select: a, where: a.owner_id == ^owner_id, preload: [:owner])
 
     if account = Repo.one(query) do
-      UserAccountAdapter.internal_to_external(account.owner, account)
+      internal_to_external(account.owner, account)
     else
       {:error, :not_found}
     end
@@ -676,13 +689,16 @@ Liquid Accounts
 
 E a segunda parte do contexto:
 
+<!-- column_layout: [5, 7] -->
+
+<!-- column: 0 -->
 ```elixir
 # ...
   def list_bank_account do
     BankAccount
     |> Repo.all()
     |> Enum.map(&Repo.preload(&1, [:owner]))
-    |> Enum.map(&UserAccountAdapter.internal_to_external(&1.owner, &1))
+    |> Enum.map(&internal_to_external(&1.owner, &1))
     |> Enum.reduce_while([], fn
       {:ok, user_account}, acc -> {:cont, [user_account | acc]}
       {:error, changeset}, _ -> {:halt, changeset}
@@ -693,14 +709,20 @@ E a segunda parte do contexto:
     Repo.transaction(fn ->
       with {:ok, user} <- Auth.fetch_user(account.owner_id),
            {:ok, user} <- Auth.update_user(user, params),
-           {:ok, bank_account} <- update_bank_account(account, params, user) do
-        UserAccountAdapter.internal_to_external(user, bank_account)
+           {:ok, bank_account} <-
+              update_bank_account(account, params, user) do
+        internal_to_external(user, bank_account)
       else
         {:error, changeset} -> Repo.rollback(changeset)
       end
     end)
   end
+# ...
+```
 
+<!-- column: 1 -->
+```elixir
+# ...
   defp update_bank_account(bank_account, params, user) do
     params = Map.put(params, :owner_id, user.id)
 
@@ -732,6 +754,7 @@ E a segunda parte do contexto:
 # ...
 ```
 
+<!-- reset_layout -->
 
 <!-- end_slide -->
 
@@ -740,6 +763,9 @@ Liquid Accounts
 
 Agora que temos um modelo e um contexto vamos construir o controller `BankAccount` em `lib/liquid_web/controller/bank_account.ex`:
 
+<!-- column_layout: [6, 5] -->
+
+<!-- column: 0 -->
 ```elixir
 defmodule LiquidWeb.BankAccountController do
   use LiquidWeb, :controller
@@ -751,7 +777,8 @@ defmodule LiquidWeb.BankAccountController do
   def me(conn, _params) do
     user = conn.assigns.user
 
-    with {:ok, bank_account} <- Accounts.fetch_bank_account_by_owner_id(user.id) do
+    with {:ok, bank_account} <-
+          Accounts.fetch_bank_account_by_owner_id(user.id) do
       render(conn, :show, user_account: bank_account)
     end
   end
@@ -761,26 +788,35 @@ defmodule LiquidWeb.BankAccountController do
   end
 
   def create(conn, params) do
-    with {:ok, bank_account} <- Accounts.register_account(params) do
+    with {:ok, bank_account} <-
+           Accounts.register_account(params) do
       render(conn, :show, user_account: bank_account)
     end
   end
+end
+```
 
+<!-- column: 1 -->
+```elixir
+# ...
   def update(conn, %{"id" => id} = params) do
-    with {:ok, bank_account} <- Accounts.fetch_bank_account(id),
-         {:ok, bank_account} <- Accounts.update_bank_account(bank_account, params) do
+    with {:ok, bank_account} <-
+            Accounts.fetch_bank_account(id),
+         {:ok, bank_account} <-
+           Accounts.update_bank_account(bank_account, params) do
       render(conn, :show, user_account: bank_account)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    with {:ok, bank_account} <- Accounts.fetch_bank_account(id),
+    with {:ok, bank_account} <-
+           Accounts.fetch_bank_account(id),
          {:ok, _} <-
            Accounts.delete_account(bank_account) do
       render(conn, :show, user_account: bank_account)
     end
   end
-end
+# ...
 ```
 
 <!-- end_slide -->
@@ -794,13 +830,9 @@ Com nosso controller, podemos implementar as rotas, deixando o `lib/liquid_web/r
 defmodule LiquidWeb.Router do
   use LiquidWeb, :router
 
-  pipeline :api do
-    plug(:accepts, ["json"])
-  end
+  # ... pipeline :api
 
-  pipeline :auth do
-    plug(LiquidWeb.VerifyHeader)
-  end
+  # ... pipeline :auth
 
   scope "/api", LiquidWeb do
     pipe_through(:api)
@@ -811,11 +843,6 @@ defmodule LiquidWeb.Router do
 
   scope "/api", LiquidWeb do
     pipe_through([:api, :auth])
-
-    get("/users/:id", UserController, :show)
-    delete("/users/:id", UserController, :delete)
-    put("/users/:id", UserController, :update)
-    post("/users", UserController, :create)
 
     scope "/accounts" do
       get("/me", BankAccountController, :me)
@@ -1077,13 +1104,8 @@ defmodule Liquid.Operations.Adapters.AccountTransactionAdapter do
   alias Liquid.Operations.Schemas.AccountTransaction
 
   def internal_to_external(%{transaction: transaction} = params) do
-    %{
-      sender: sender,
-      receiver: receiver,
-      sender_owner: sender_user,
-      receiver_owner: receiver_user
-    } =
-      params
+    %{sender: sender, receiver: receiver} = params
+    %{sender_owner: sender_user, receiver_owner: receiver_user} = params
 
     with {:ok, sender} <- UserAccountAdapter.internal_to_external(sender_user, sender),
          {:ok, receiver} <- UserAccountAdapter.internal_to_external(receiver_user, receiver) do
@@ -1159,6 +1181,8 @@ Agora vamos pro código do Consumidor:
 
 Documentação sobre [GenServer](https://hexdocs.pm/elixir/GenServer.html)
 
+Primeiro vamos implementar a API pública do Consumidor:
+
 ```elixir
 defmodule Liquid.Operations.Consumer do
   @moduledoc "Consumes Transaction events and process them"
@@ -1182,7 +1206,18 @@ defmodule Liquid.Operations.Consumer do
     payload = {:chargeback_transaction, %{transaction_identifier: identifier}}
     GenServer.cast(__MODULE__, payload)
   end
+end
+```
 
+<!-- end_slide -->
+
+Liquid Operations
+---
+
+E agora a parte "privada" ou API de implementação:
+
+```elixir
+# ...
   @impl true
   def init(_dummy) do
     {:ok, []}
@@ -1202,7 +1237,7 @@ defmodule Liquid.Operations.Consumer do
     Operations.transact!(event)
     {:noreply, :processing}
   end
-end
+# ...
 ```
 
 <!-- end_slide -->
@@ -1224,18 +1259,10 @@ defmodule Liquid.Operations do
   defdelegate delete_transaction(transaction), to: Repo, as: :delete
 
   defp base_query do
-      from(t in Transaction,
-        join: s in assoc(t, :sender),
-        join: su in assoc(s, :owner),
+      from(t in Transaction, join: s in assoc(t, :sender), join: su in assoc(s, :owner),
         join: r in assoc(t, :receiver),
         join: ru in assoc(r, :owner),
-        select: %{
-          transaction: t,
-          sender: s,
-          receiver: r,
-          sender_owner: su,
-          receiver_owner: ru
-        }
+        select: %{transaction: t, sender: s, receiver: r, sender_owner: su, receiver_owner: ru}
       )
   end
 
@@ -1250,7 +1277,16 @@ defmodule Liquid.Operations do
       true -> {:error, :not_found}
     end
   end
+end
+```
 
+<!-- end_slide -->
+
+Liquid Operations
+---
+
+```elixir
+# ...
   def list_transactions(from, to) do
     query =
       base_query()
@@ -1264,7 +1300,7 @@ defmodule Liquid.Operations do
       {:error, changeset}, _ -> {:halt, changeset}
     end)
   end
-end
+# ...
 ```
 
 <!-- end_slide -->
@@ -1272,7 +1308,7 @@ end
 Liquid Operations
 ---
 
-Agora vamos implementar a função para processar uma transação:
+Agora vamos implementar a função para processar uma transação. Primeiro uma para "agendar" uma transação e criar um transação no banco!
 
 ```elixir
 # ...
@@ -1300,7 +1336,18 @@ Agora vamos implementar a função para processar uma transação:
     |> Transaction.changeset(params)
     |> Repo.insert()
   end
+# ...
+```
 
+<!-- end_slide -->
+
+Liquid Operations
+---
+
+E agora a função que vai realizar a transação de fato! Perceba que criamos mais uma função no contexto de `Accounts` para transferir valores entre duas contas bancárias.
+
+```elixir
+# ...
   def transact!(%TransactEvent{} = event) do
     with {:ok, sender} <- Accounts.fetch_bank_account(event.sender_identifier),
          {:ok, receiver} <- Accounts.fetch_bank_account(event.receiver_identifier),
@@ -1328,13 +1375,49 @@ Agora vamos implementar a função para processar uma transação:
 # ...
 ```
 
+<!-- end_slide -->
+
+Liquid Operations
+---
+
+Essa é a implementação de transferência em si, de um valor de uma conta para outra.
+
+```elixir
+# ...
+  def transfer_amount_between_accounts(sender, receiver, amount) do
+    sender_attrs = withdrawl_amount(sender, amount)
+    receiver_attrs = deposit_amount(receiver, amount)
+
+    Repo.transaction(fn ->
+      with {:ok, _} <- BankAccount.changeset(sender, sender_attrs) |> Repo.update(),
+           {:ok, _} <- BankAccount.changeset(receiver, receiver_attrs) |> Repo.update() do
+        :done
+      else
+        {:error, changeset} -> Repo.rollback(changeset)
+      end
+    end)
+  end
+
+  defp withdrawl_amount(%BankAccount{} = sender, amount) do
+    sender
+    |> Map.from_struct()
+    |> Map.update(:balance, sender.balance, &Kernel.-(&1, amount))
+  end
+
+  defp deposit_amount(%BankAccount{} = receiver, amount) do
+    receiver
+    |> Map.from_struct()
+    |> Map.update(:balance, receiver.balance, &Kernel.+(&1, amount))
+  end
+# ...
+```
 
 <!-- end_slide -->
 
 Liquid Operations
 ---
 
-E claro, as funções auxiliares usadas:
+E claro, as funções auxiliares usadas no contexto de `Operations`:
 
 ```elixir
 # ...
@@ -1342,12 +1425,8 @@ E claro, as funções auxiliares usadas:
   
   defp maybe_fails_transaction(sender, receiver, event) do
     case TransactionLogic.validate_transaction(sender, receiver, event.amount) do
-      {:error, _} = err ->
-        set_transaction_failed(event)
-        err
-
-      :ok ->
-        :ok
+      {:error, _} = err -> set_transaction_failed(event); err
+      :ok -> :ok
     end
   end
 
@@ -1400,20 +1479,9 @@ Agora vamos implementar o estorno de uma transação:
          {:ok, _} <- set_transaction_chargebacked(transaction) do
       :ok
     else
-      :error ->
-        transaction
-        |> transfer_error_message()
-        |> Logger.error()
-
-      {:error, :not_found} ->
-        transaction
-        |> account_does_not_exists_error_message()
-        |> Logger.error()
-
-      {:error, :already_chargebacked} ->
-        transaction
-        |> transaction_already_chargebacked_message()
-        |> Logger.error()
+      :error -> transaction |> transfer_error_message() |> Logger.error()
+      {:error, :not_found} -> transaction |> account_does_not_exists_error_message() |> Logger.error()
+      {:error, :already_chargebacked} -> transaction |> transaction_already_chargebacked_message() |> Logger.error()
     end
   end
 
@@ -1432,6 +1500,9 @@ Liquid Operations
 
 Precisamos implementar agora o controller e o modulo de JSON de `Transaction`:
 
+<!-- column_layout: [5, 4] -->
+
+<!-- column: 0 -->
 ```elixir
 defmodule LiquidWeb.TransactionController do
   use LiquidWeb, :controller
@@ -1441,25 +1512,29 @@ defmodule LiquidWeb.TransactionController do
   action_fallback(LiquidWeb.FallbackController)
 
   def process(conn, params) do
-    with {:ok, transaction} <- Operations.schedule_new_transaction(params) do
+    with {:ok, transaction} <-
+          Operations.schedule_new_transaction(params) do
       render(conn, :show, transaction: transaction)
     end
   end
 
   def chargeback(conn, %{"id" => id}) do
-    with :ok <- Operations.schedule_transaction_chargeback(id) do
+    with :ok <-
+          Operations.schedule_transaction_chargeback(id) do
       resp(conn, :accepted, "")
     end
   end
 
   def show(conn, %{"id" => id}) do
-    with {:ok, transaction} <- Operations.fetch_transaction(id, :schema) do
+    with {:ok, transaction} <-
+            Operations.fetch_transaction(id, :schema) do
       render(conn, :show, transaction: transaction)
     end
   end
 end
 ```
 
+<!-- column: 1 -->
 E o JSON:
 
 ```elixir
@@ -1481,35 +1556,14 @@ E por fim, vamos alterar o `router.ex` com as rotas de `Transaction`:
 defmodule LiquidWeb.Router do
   use LiquidWeb, :router
 
-  pipeline :api do
-    plug(:accepts, ["json"])
-  end
+  # pipeline :api do
 
-  pipeline :auth do
-    plug(LiquidWeb.VerifyHeader)
-  end
+  # pipeline :auth do
 
-  scope "/api", LiquidWeb do
-    pipe_through(:api)
-
-    post("/login", UserController, :login)
-    post("/accounts", BankAccountController, :create)
-  end
+  # scope "/api", LiquidWeb do
 
   scope "/api", LiquidWeb do
     pipe_through([:api, :auth])
-
-    get("/users/:id", UserController, :show)
-    delete("/users/:id", UserController, :delete)
-    put("/users/:id", UserController, :update)
-    post("/users", UserController, :create)
-
-    scope "/accounts" do
-      get("/me", BankAccountController, :me)
-      get("/", BankAccountController, :index)
-      put("/:id", BankAccountController, :update)
-      delete("/:id", BankAccountController, :delete)
-    end
 
     scope "/transactions" do
       get("/:id", TransactionController, :show)
