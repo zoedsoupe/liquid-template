@@ -12,7 +12,7 @@ Olá! Eu sou Zoey Pessanha, uma entusiasta de Elixir e engenheira de software co
 
 ## Experiências
 
-<!-- column_layout: [2, 2, 2, 2] -->
+<!-- column_layout: [4, 3, 3, 3] -->
 
 <!-- column: 0 -->
 ![Cumbuca's logo](./assets/logo_cumbuca.png)
@@ -50,7 +50,14 @@ Introdução ao Elixir
 
 ## Como a BEAM funciona?
 
+<!-- column_layout: [2, 10, 2] -->
+<!-- column: 1 -->
 ![BEAM working](./assets/beam_scheduler.jpg)
+
+<!-- end_slide -->
+
+Introdução ao Elixir
+---
 
 ### Supervisors
 
@@ -1043,7 +1050,7 @@ defmodule Liquid.Operations.Logic.TransactionLogic do
       !sender or !receiver or !amount -> {:error, :invalid_params}
       sender.id == receiver.id -> {:error, :same_account}
       sender.balance < amount -> {:error, :insufficient_funds}
-      true -> :ok
+      true -> {:ok, :valid}
     end
   end
 end
@@ -1352,7 +1359,7 @@ E agora a função que vai realizar a transação de fato! Perceba que criamos m
     with {:ok, sender} <- Accounts.fetch_bank_account(event.sender_identifier),
          {:ok, receiver} <- Accounts.fetch_bank_account(event.receiver_identifier),
          {:ok, transaction} <- fetch_transaction(event.transaction_identifier),
-         :ok <- maybe_fails_transaction(sender, receiver, event),
+         {:ok, :valid} <- TransactionLogic.validate_transaction(sender, receiver, event),
          {:ok, :done} <- Accounts.transfer_amount_between_accounts(sender, receiver, event.amount) do
       set_transaction_processed(transaction)
     else
@@ -1423,13 +1430,6 @@ E claro, as funções auxiliares usadas no contexto de `Operations`:
 # ...
   require Logger
   
-  defp maybe_fails_transaction(sender, receiver, event) do
-    case TransactionLogic.validate_transaction(sender, receiver, event.amount) do
-      {:error, _} = err -> set_transaction_failed(event); err
-      :ok -> :ok
-    end
-  end
-
   defp set_transaction_failed(%TransactEvent{} = event) do
     with {:ok, transaction} <- fetch_transaction(event.transaction_identifier) do
       transaction |> Transaction.changeset(%{status: :failed}) |> Repo.update()
