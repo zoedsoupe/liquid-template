@@ -9,14 +9,15 @@ RUN mix do local.hex --force, local.rebar --force
 COPY config/ ./config/
 COPY mix.exs mix.lock ./
 
-COPY ./priv ./
+COPY priv/ ./priv/
 
 ENV MIX_ENV=prod
 
 RUN mix deps.get
 RUN mix deps.compile
 
-COPY ./lib/ ./
+COPY lib/ ./lib/
+COPY rel/ ./rel/
 
 RUN mix compile --force
 RUN mix release
@@ -36,4 +37,4 @@ WORKDIR /app
 
 COPY --from=releaser /app/_build/prod/rel/liquid ./
 
-CMD ["bin/liquid", "eval", "Liquid.Release.migrate", "&&", "exec", "bin/liquid", "start"]
+CMD /app/bin/server
