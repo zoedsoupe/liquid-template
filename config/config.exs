@@ -12,7 +12,8 @@ config :liquid, LiquidWeb.Endpoint,
     formats: [json: LiquidWeb.ErrorJSON],
     layout: false
   ],
-  server: true
+  server: true,
+  live_view: [signing_salt: "ZtBLfa1kGfwAS8/hYV4B6XYwwaF9wOac"]
 
 # Configures Elixir's Logger
 config :logger, :console,

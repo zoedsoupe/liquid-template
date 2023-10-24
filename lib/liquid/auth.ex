@@ -19,8 +19,8 @@ defmodule Liquid.Auth do
   end
 
   def register_user(attrs) do
-    attrs
-    |> User.register_changeset()
+    %User{}
+    |> User.register_changeset(attrs)
     |> Repo.insert()
   end
 
@@ -52,4 +52,8 @@ defmodule Liquid.Auth do
   end
 
   defdelegate delete_user(user), to: Repo, as: :delete
+
+  def change_user_registration(%User{} = user, params \\ %{}) do
+    User.register_changeset(user, params)
+  end
 end

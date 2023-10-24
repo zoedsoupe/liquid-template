@@ -38,6 +38,7 @@ defmodule Liquid.MixProject do
       {:bcrypt_elixir, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.20"},
+      {:phoenix_html, "~> 3.3"},
       {:floki, "~> 0.35"},
       {:bandit, "~> 0.6"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},

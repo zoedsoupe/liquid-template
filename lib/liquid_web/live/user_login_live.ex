@@ -1,19 +1,26 @@
-defmodule LiquidWeb.LoginLive do
+defmodule LiquidWeb.UserLoginLive do
   use LiquidWeb, :live_view
 
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.header>
+      <.header class="text-center">
         Sign in to account
+        <:subtitle>
+          Don't have an account?
+          <.link navigate={~p"/"} class="font-semibold text-brand hover:underline">
+            Sign up
+          </.link>
+          for an account now.
+        </:subtitle>
       </.header>
 
-      <Form.render for={@form} id="login_form" action={~p"/log_in"} phx-update="ignore">
-        <Form.input field={@form[:email]} id="#user_cpf" type="text" label="Email" required />
+      <Form.render for={@form} id="login_form" action={~p"/login"} phx-update="ignore">
+        <Form.input field={@form[:email]} id="user_cpf" type="text" label="Email" required />
         <Form.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.button phx-disable-with="Signing in..." class="w-full">
+          <.button phx-disable-with="Acessando..." class="w-full">
             Sign in <span aria-hidden="true">→</span>
           </.button>
         </:actions>

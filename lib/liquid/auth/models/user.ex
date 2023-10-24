@@ -23,8 +23,8 @@ defmodule Liquid.Auth.Models.User do
     cast(user, attrs, ~w[cpf first_name last_name password]a)
   end
 
-  def register_changeset(attrs) do
-    %__MODULE__{}
+  def register_changeset(user \\ %__MODULE__{}, attrs) do
+    user
     |> changeset(attrs)
     |> validate_required(~w[cpf first_name password]a)
     |> unique_constraint(:cpf)

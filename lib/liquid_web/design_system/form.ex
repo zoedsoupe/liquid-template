@@ -68,14 +68,20 @@ defmodule LiquidWeb.DesignSystem.Form do
 
   slot(:inner_block)
 
+  def maybe_build_required_label(%{label: label} = assigns) do
+    if assigns[:required] do
+      label <> " *"
+    else
+      label
+    end
+  end
+
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
-    |> assign(field: nil, id: assigns.id || field.id)
+    |> assign(field: nil, id: assigns[:id] || field.id)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
-    |> assign(
-      :label,
-      if(assigns[:rest][:required], do: assigns.label <> " *", else: assigns.label)
-    )
+    |> assign(:label, maybe_build_required_label(assigns))
+    |> assign_new(:name, fn -> field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> input()
   end
