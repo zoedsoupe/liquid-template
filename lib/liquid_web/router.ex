@@ -1,6 +1,16 @@
 defmodule LiquidWeb.Router do
   use LiquidWeb, :router
 
+  pipeline :browser do
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
+    plug(LiquidWeb.Auth.Pipeline)
+    plug(:put_root_layout, html: {AtivarWeb.Layouts, :root})
+  end
+
   pipeline :api do
     plug(:accepts, ["json"])
   end

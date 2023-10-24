@@ -34,6 +34,7 @@ defmodule Liquid.MixProject do
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.2"},
+      {:lucide_icons, "~> 1.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.20"},

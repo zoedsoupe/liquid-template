@@ -28,6 +28,7 @@ defmodule LiquidWeb do
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 
@@ -79,12 +80,14 @@ defmodule LiquidWeb do
   defp html_helpers do
     quote do
       # HTML escaping functionality
+      import LiquidWeb.DesignSystem
       import Phoenix.HTML
       import Phoenix.HTML.Form, only: [submit: 1, submit: 2]
       import Phoenix.LiveView.TagEngine, only: [component: 3]
 
       # Shortcut for generating JS commands
       alias LiquidWeb.DesignSystem
+      alias LiquidWeb.DesignSystem.Form
       alias Phoenix.LiveView.JS
 
       # Routes generation with the ~p sigil
