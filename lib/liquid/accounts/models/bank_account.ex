@@ -14,6 +14,16 @@ defmodule Liquid.Accounts.Models.BankAccount do
   end
 
   def changeset(account \\ %__MODULE__{}, attrs) do
+    attrs =
+      Enum.map(attrs, fn {k, v} ->
+        if is_binary(k) do
+          {k, v}
+        else
+          {Atom.to_string(k), v}
+        end
+      end)
+      |> Map.new()
+
     account
     |> cast(attrs, [:balance, :owner_id])
     |> validate_required([:balance, :owner_id])
