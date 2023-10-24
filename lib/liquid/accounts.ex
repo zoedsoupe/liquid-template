@@ -47,8 +47,9 @@ defmodule Liquid.Accounts do
     Repo.transaction(fn ->
       with {:ok, user} <- Auth.fetch_user(account.owner_id),
            {:ok, user} <- Auth.update_user(user, params),
-           {:ok, bank_account} <- update_bank_account(account, params, user) do
-        UserAccountAdapter.internal_to_external(user, bank_account)
+           {:ok, bank_account} <- update_bank_account(account, params, user),
+           {:ok, user_account} <- UserAccountAdapter.internal_to_external(user, bank_account) do
+        user_account
       else
         {:error, changeset} -> Repo.rollback(changeset)
       end
@@ -66,8 +67,9 @@ defmodule Liquid.Accounts do
   def register_account(params) do
     Repo.transaction(fn ->
       with {:ok, user} <- Auth.register_user(params),
-           {:ok, bank_account} <- create_bank_account(params, user) do
-        UserAccountAdapter.internal_to_external(user, bank_account)
+           {:ok, bank_account} <- create_bank_account(params, user),
+           {:ok, user_account} <- UserAccountAdapter.internal_to_external(user, bank_account) do
+        user_account
       else
         {:error, changeset} -> Repo.rollback(changeset)
       end

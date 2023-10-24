@@ -19,6 +19,7 @@ defmodule LiquidWeb.BankAccountController do
 
   def create(conn, params) do
     with {:ok, bank_account} <- Accounts.register_account(params) do
+      IO.inspect(bank_account)
       render(conn, :show, user_account: bank_account)
     end
   end
