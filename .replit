@@ -2,7 +2,7 @@ hidden = [".iex.exs"]
 
 [interpreter]
 command = ["iex"]
-run = "iex -S mix phx.server"
+run = "mix do deps.get, ecto.setup, assets.setup, phx.server"
 
 [env]
 LC_ALL = "en_US.UTF-8"
@@ -10,7 +10,7 @@ HEX_HOME = "$REPL_HOME/.hex"
 MIX_HOME = "$REPL_HOME/.mix"
 
 [nix]
-channel = "stable-22_11"
+channel = "nixos-unstable"
 
 [deployment]
 run = ["sh", "-c", "iex -S mix phx.server"]
