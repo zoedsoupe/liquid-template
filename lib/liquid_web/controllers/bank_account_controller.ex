@@ -6,7 +6,7 @@ defmodule LiquidWeb.BankAccountController do
   action_fallback(LiquidWeb.FallbackController)
 
   def me(conn, _params) do
-    user = conn.assigns.user
+    user = conn.assigns.current_user
 
     with {:ok, bank_account} <- Accounts.fetch_bank_account_by_owner_id(user.id) do
       render(conn, :show, user_account: bank_account)

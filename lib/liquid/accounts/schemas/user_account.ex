@@ -3,13 +3,12 @@ defmodule Liquid.Accounts.Schemas.UserAccount do
 
   import Ecto.Changeset
 
-  @fields ~w[balance owner_cpf owner_name identifier]a
+  @fields ~w[balance owner_name identifier]a
 
   @derive {Jason.Encoder, only: @fields}
   @primary_key false
   embedded_schema do
     field(:balance, :string)
-    field(:owner_cpf, :string)
     field(:owner_name, :string)
     field(:identifier, :string)
   end

@@ -20,10 +20,10 @@ defmodule LiquidWeb.VerifyHeader do
 
       token ->
         with {:ok, user_id} <- verify_token(conn, token),
-             {:ok, user} <- Liquid.Auth.fetch_user(user_id) do
+             {:ok, bank_account} <- Liquid.Accounts.fetch_bank_account_by_owner_id(user_id) do
           conn
-          |> assign(:user, user)
-          |> assign(:token, token)
+          |> assign(:current_user, bank_account.owner)
+          |> assign(:current_account, bank_account)
         else
           _ -> unauthorized(conn)
         end

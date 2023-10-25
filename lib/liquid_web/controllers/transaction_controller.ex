@@ -6,8 +6,12 @@ defmodule LiquidWeb.TransactionController do
   action_fallback(LiquidWeb.FallbackController)
 
   def process(conn, params) do
-    with {:ok, transaction} <- Operations.schedule_new_transaction(params) do
-      render(conn, :show, transaction: transaction)
+    current_account = conn.assigns.current_account
+
+    with {:ok, transaction_id} <- Operations.schedule_new_transaction(params, current_account) do
+      conn
+      |> put_status(:accepted)
+      |> render(:show, id: transaction_id)
     end
   end
 
