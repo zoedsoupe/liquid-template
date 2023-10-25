@@ -9,7 +9,7 @@ defmodule LiquidWeb.Router do
     plug(:fetch_live_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-    plug(:put_root_layout, html: {AtivarWeb.Layouts, :root})
+    plug(:put_root_layout, html: {LiquidWeb.Layouts, :root})
   end
 
   pipeline :api do
@@ -21,6 +21,8 @@ defmodule LiquidWeb.Router do
   end
 
   scope "/", LiquidWeb do
+    pipe_through :browser
+
     live("/", UserRegistrationLive, :render)
     live("/design-system", DesignSystemLive, :render)
 

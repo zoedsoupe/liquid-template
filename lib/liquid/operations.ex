@@ -3,8 +3,9 @@ defmodule Liquid.Operations do
   import Liquid.Operations.Adapters.TransactionAdapter
 
   alias Liquid.Accounts
-  alias Liquid.Operations.Events.TransactEvent
+  alias Liquid.Accounts.Models.BankAccount
   alias Liquid.Operations.Consumer
+  alias Liquid.Operations.Events.TransactEvent
   alias Liquid.Operations.Logic.TransactionLogic
   alias Liquid.Operations.Models.Transaction
   alias Liquid.Repo
@@ -67,22 +68,12 @@ defmodule Liquid.Operations do
     end)
   end
 
-  def schedule_new_transaction(params) do
+  def schedule_new_transaction(params, %BankAccount{} = current_account) do
     with {:ok, transaction} <- create_transaction(params),
-         {:ok, event} <- internal_to_event(transaction),
-         {:ok, sender} <- Accounts.fetch_bank_account(transaction.sender_id),
-         {:ok, receiver} <- Accounts.fetch_bank_account(transaction.receiver_id),
-         payload = %{
-           sender: sender,
-           sender_owner: sender.owner,
-           receiver: receiver,
-           receiver_owner: receiver.owner,
-           transaction: transaction
-         },
-         {:ok, transaction} <- internal_to_external(payload) do
+         {:ok, event} <- internal_to_event(transaction, current_account) do
       Consumer.process_transaction(event)
-      transaction_process_scheduled_message(transaction.identifier)
-      {:ok, transaction}
+      transaction_process_scheduled_message(transaction.id)
+      {:ok, transaction.id}
     end
   end
 
@@ -100,8 +91,10 @@ defmodule Liquid.Operations do
   def transact!(%TransactEvent{} = event) do
     with {:ok, sender} <- Accounts.fetch_bank_account(event.sender_identifier),
          {:ok, receiver} <- Accounts.fetch_bank_account(event.receiver_identifier),
+         {:ok, current_account} <- Accounts.fetch_bank_account(event.current_account_identifier),
          {:ok, transaction} <- fetch_transaction(event.transaction_identifier),
-         :ok <- maybe_fails_transaction(sender, receiver, event),
+         :ok <-
+           TransactionLogic.validate_transaction(sender, receiver, current_account, event.amount),
          {:ok, :done} <- Accounts.transfer_amount_between_accounts(sender, receiver, event.amount) do
       set_transaction_processed(transaction)
     else
@@ -110,26 +103,21 @@ defmodule Liquid.Operations do
         |> transfer_error_message()
         |> Logger.error()
 
+        set_transaction_failed(event)
+
       {:error, :not_found} ->
         event
         |> account_does_not_exists_error_message()
         |> Logger.error()
 
+        set_transaction_failed(event)
+
       {:error, validation_error} ->
         event
         |> transaction_validation_error_message(validation_error)
         |> Logger.error()
-    end
-  end
 
-  defp maybe_fails_transaction(sender, receiver, event) do
-    case TransactionLogic.validate_transaction(sender, receiver, event.amount) do
-      {:error, _} = err ->
-        set_transaction_failed(event)
-        err
-
-      :ok ->
-        :ok
+        set_transaction_failed(event, validation_error)
     end
   end
 
@@ -167,6 +155,15 @@ defmodule Liquid.Operations do
   defp set_transaction_failed(%TransactEvent{} = event) do
     with {:ok, transaction} <- fetch_transaction(event.transaction_identifier) do
       transaction |> Transaction.changeset(%{status: :failed}) |> Repo.update()
+    end
+  end
+
+  defp set_transaction_failed(%TransactEvent{} = event, error_reason)
+       when is_atom(error_reason) do
+    with {:ok, transaction} <- fetch_transaction(event.transaction_identifier) do
+      transaction
+      |> Transaction.changeset(%{status: :failed, error_reason: error_reason})
+      |> Repo.update()
     end
   end
 

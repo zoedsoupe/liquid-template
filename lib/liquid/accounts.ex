@@ -22,13 +22,19 @@ defmodule Liquid.Accounts do
     end
   end
 
-  def fetch_bank_account_by_owner_id(owner_id) do
+  def fetch_bank_account_by_owner_id(owner_id, mode \\ :model) do
     query = from(a in BankAccount, select: a, where: a.owner_id == ^owner_id, preload: [:owner])
+    account = Repo.one(query)
 
-    if account = Repo.one(query) do
-      UserAccountAdapter.internal_to_external(account.owner, account)
-    else
-      {:error, :not_found}
+    cond do
+      account && mode == :model ->
+        {:ok, account}
+
+      account && mode == :schema ->
+        UserAccountAdapter.internal_to_external(account.owner, account)
+
+      !account ->
+        {:error, :not_found}
     end
   end
 

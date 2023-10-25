@@ -5,8 +5,8 @@ defmodule Liquid.Operations.Events.TransactEvent do
 
   import Ecto.Changeset
 
-  @fields ~w[amount sender_identifier receiver_identifier transaction_identifier]a
-  @required_fields ~w[sender_identifier receiver_identifier transaction_identifier]a
+  @fields ~w[amount sender_identifier receiver_identifier transaction_identifier current_account_identifier]a
+  @required_fields ~w[sender_identifier receiver_identifier transaction_identifier current_account_identifier]a
 
   @derive {Jason.Encoder, @fields}
   @primary_key false
@@ -15,6 +15,7 @@ defmodule Liquid.Operations.Events.TransactEvent do
     field(:sender_identifier, :string)
     field(:receiver_identifier, :string)
     field(:transaction_identifier, :string)
+    field :current_account_identifier, :string
   end
 
   def parse(params) do

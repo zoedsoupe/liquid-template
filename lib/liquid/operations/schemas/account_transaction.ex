@@ -14,6 +14,7 @@ defmodule Liquid.Operations.Schemas.AccountTransaction do
     field(:amount, :string)
     field(:processed_at, :string)
     field(:chargebacked_at, :string)
+    field :error, :string
 
     embeds_one(:sender, UserAccount)
     embeds_one(:receiver, UserAccount)
@@ -21,7 +22,7 @@ defmodule Liquid.Operations.Schemas.AccountTransaction do
 
   def parse(params) do
     %__MODULE__{}
-    |> cast(params, [:amount, :processed_at, :chargebacked_at, :identifier])
+    |> cast(params, [:amount, :processed_at, :chargebacked_at, :identifier, :error])
     |> put_embed(:sender, params[:sender], required: true)
     |> put_embed(:receiver, params[:receiver], required: true)
     |> validate_required([:amount, :identifier])

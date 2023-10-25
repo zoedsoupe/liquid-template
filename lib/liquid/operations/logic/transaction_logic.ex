@@ -12,9 +12,15 @@ defmodule Liquid.Operations.Logic.TransactionLogic do
     end
   end
 
-  def validate_transaction(%BankAccount{} = sender, %BankAccount{} = receiver, amount) do
+  def validate_transaction(
+        %BankAccount{} = sender,
+        %BankAccount{} = receiver,
+        %BankAccount{} = current_account,
+        amount
+      ) do
     cond do
       !sender or !receiver or !amount -> {:error, :invalid_params}
+      sender.id != current_account.id -> {:error, :invalid_sender}
       sender.id == receiver.id -> {:error, :same_account}
       sender.balance < amount -> {:error, :insufficient_funds}
       true -> :ok
