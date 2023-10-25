@@ -1,9 +1,13 @@
 hidden = [".iex.exs"]
+<<<<<<< HEAD
 
 entrypoint = "main.exs"
 
 [interpreter]
 command = ["iex"]
+=======
+run = "iex -S mix phx.server"
+>>>>>>> e8337fa774bc5b475d81802a8e0f084fdac2e3a8
 
 [env]
 LC_ALL = "en_US.UTF-8"
@@ -12,3 +16,9 @@ MIX_HOME = "$REPL_HOME/.mix"
 
 [nix]
 channel = "stable-22_11"
+<<<<<<< HEAD
+=======
+
+[deployment]
+run = ["sh", "-c", "iex -S mix phx.server"]
+>>>>>>> e8337fa774bc5b475d81802a8e0f084fdac2e3a8
