@@ -28,3 +28,4 @@ liquid-*.tar
 .env
 
 /assets/node_modules/
+/priv/static/assets/

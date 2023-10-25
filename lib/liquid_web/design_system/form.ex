@@ -22,7 +22,7 @@ defmodule LiquidWeb.DesignSystem.Form do
   attr(:as, :any, default: nil, doc: "the server side parameter to collect all input under")
 
   attr(:rest, :global,
-    include: ~w(autocomplete name rel action enctype method novalidate target multipart),
+    include: ~w(autocomplete name rel action enctype method novalidate target multipart class),
     doc: "the arbitrary HTML attributes to apply to the form tag"
   )
 
@@ -32,9 +32,9 @@ defmodule LiquidWeb.DesignSystem.Form do
   def render(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="form">
         <%= render_slot(@inner_block, f) %>
-        <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
+        <div :for={action <- @actions}>
           <%= render_slot(action, f) %>
         </div>
       </div>
@@ -89,20 +89,16 @@ defmodule LiquidWeb.DesignSystem.Form do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div phx-feedback-for={@name} class="input-container">
       <.label for={@id}><%= @label %></.label>
       <input
         type={@type}
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
-        ]}
-        {@rest}
+        required={@required}
+        placeholder={Map.get(assigns, :placeholder)}
+        class="input"
       />
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
@@ -117,7 +113,7 @@ defmodule LiquidWeb.DesignSystem.Form do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="label">
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -130,8 +126,8 @@ defmodule LiquidWeb.DesignSystem.Form do
 
   def error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
-      <Lucideicons.alert_circle class="mt-0.5 h-5 w-5 flex-none" />
+    <p style="color: #fff;">
+      <Lucideicons.alert_circle style="height: 0.75rem; width: 0.75rem;" />
       <%= render_slot(@inner_block) %>
     </p>
     """

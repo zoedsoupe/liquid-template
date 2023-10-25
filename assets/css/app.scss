@@ -1,3 +1,5 @@
+@import "./pallete.scss";
+
 * {
   margin: 0;
   padding: 0;
@@ -19,4 +21,154 @@ body {
   font-family: "Work Sans";
   font-size: 62.5%;
   font-weight: 400;
+  background-color: $black;
+  height: 100vh;
+  color: $white;
+  max-width: 100vw;
+}
+
+.no-appearance {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  -ms-appearance: none !important;
+  -o-appearance: none !important;
+  appearance: none !important;
+}
+
+.mx-auto {
+  margin: 0 auto;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.btn {
+  @extend .flex-center;
+  border-radius: 0.25rem;
+  padding: 0.75rem 0.625rem;
+  cursor: pointer;
+  color: $black;
+  outline: none;
+  flex: 1 0 0;
+}
+
+.btn-primary {
+  background-color: $orange;
+}
+
+.btn-secondary {
+  border: 1px solid $white;
+  color: $white;
+}
+
+.btn-md {
+  width: 8.75rem;
+}
+
+.btn-lg {
+  width: 19.5rem;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  color: $white;
+}
+
+.input {
+  @extend .no-appearance;
+  @extend .text-xl;
+  background-color: transparent;
+  padding: 1rem 0.5rem;
+  align-self: stretch;
+  border: none;
+  border-bottom: 1px solid $light-black;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  background-image: none;
+  color: $white;
+}
+
+.input:focus {
+  border-bottom: 1px solid $orange;
+}
+
+.label {
+  @extend .text-lg;
+  color: $white;
+  leading-trim: both;
+  text-edge: cap;
+  font-style: normal;
+  line-height: 1.5rem;
+}
+
+.text-xs {
+  font-size: 0.625rem;
+}
+
+.text-sm {
+  font-size: 0.75rem;
+
+}
+
+.text-md {
+  font-size: 0.875rem;
+}
+
+.text-lg {
+  font-size: 1.0rem;
+}
+
+.text-xl {
+  font-size: 1.5rem;
+}
+
+.text-xl {
+  font-size: 2rem;
+}
+
+.form {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.user-profile-container {
+  @extend .flex-center;
+  border-radius: 7.3rem;
+  width: 7.38rem;
+  height: 7.375rem;
+  background-color: $orange;
+}
+
+.text-black {
+  color: $black;
+}
+
+.text-white {
+  color: $white;
+}
+
+.icon {
+  width: 50%;
+  height: 50%;
 }

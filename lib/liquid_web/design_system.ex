@@ -28,21 +28,16 @@ defmodule LiquidWeb.DesignSystem do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
-      class={[
-        "fixed top-2 right-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
-        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
-      ]}
       {@rest}
     >
-      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <Lucideicons.alert_circle :if={@kind == :info} class="h-4 w-4" />
-        <Lucideicons.x_circle :if={@kind == :error} class="h-4 w-4" />
+      <p :if={@title}>
+        <Lucideicons.alert_circle :if={@kind == :info} />
+        <Lucideicons.x_circle :if={@kind == :error} />
         <%= @title %>
       </p>
       <p class="mt-2 text-sm leading-5"><%= msg %></p>
-      <button type="button" class="group absolute top-1 right-1 p-2" aria-label="close">
-        <Lucideicons.x class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+      <button type="button" aria-label="close">
+        <Lucideicons.x />
       </button>
     </div>
     """
@@ -69,7 +64,7 @@ defmodule LiquidWeb.DesignSystem do
       phx-connected={hide("#client-error")}
       hidden
     >
-      Attempting to reconnect <Lucideicons.refresh_ccw class="ml-1 h-3 w-3 animate-spin" />
+      Attempting to reconnect <Lucideicons.refresh_ccw />
     </.flash>
 
     <.flash
@@ -81,7 +76,7 @@ defmodule LiquidWeb.DesignSystem do
       hidden
     >
       Hang in there while we get back on track
-      <Lucideicons.refresh_ccw class="ml-1 h-3 w-3 animate-spin" />
+      <Lucideicons.refresh_ccw />
     </.flash>
     """
   end
@@ -95,8 +90,8 @@ defmodule LiquidWeb.DesignSystem do
       <.button phx-click="go" class="ml-2">Send!</.button>
   """
   attr(:style, :string, default: "primary", values: ~w(primary secondary))
-  attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
   attr(:type, :string, default: "button", values: ~w(button submit reset))
+  attr :size, :string, values: ~w(md lg), default: "md"
   attr(:class, :string, default: nil)
   attr(:rest, :global, include: ~w(disabled form name value))
 
@@ -104,7 +99,7 @@ defmodule LiquidWeb.DesignSystem do
 
   def button(assigns) do
     ~H"""
-    <button type={@type} class={@class} {@rest}>
+    <button type={@type} class={[@class, "btn", "btn-#{@style}", "btn-#{@size}"]} {@rest}>
       <%= render_slot(@inner_block) %>
     </button>
     """
@@ -121,16 +116,16 @@ defmodule LiquidWeb.DesignSystem do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
+    <header>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1>
           <%= render_slot(@inner_block) %>
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []}>
           <%= render_slot(@subtitle) %>
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div><%= render_slot(@actions) %></div>
     </header>
     """
   end
@@ -151,11 +146,11 @@ defmodule LiquidWeb.DesignSystem do
 
   def list(assigns) do
     ~H"""
-    <div class="mt-14">
-      <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-2/4 flex-none text-zinc-500"><%= item.title %></dt>
-          <dd class="text-zinc-700"><%= render_slot(item) %></dd>
+    <div class="">
+      <dl class="">
+        <div :for={item <- @item} class="">
+          <dt class=""><%= item.title %></dt>
+          <dd class=""><%= render_slot(item) %></dd>
         </div>
       </dl>
     </div>
@@ -174,11 +169,8 @@ defmodule LiquidWeb.DesignSystem do
 
   def back(assigns) do
     ~H"""
-    <div class="mt-16">
-      <.link
-        navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-      >
+    <div class="">
+      <.link navigate={@navigate} class="">
         <Lucideicons.arrow_left class="h-3 w-3" />
         <%= render_slot(@inner_block) %>
       </.link>
