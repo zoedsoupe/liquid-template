@@ -6,6 +6,8 @@ Aplicação desenvolvida na SCTI 2023 da UENF.
 
 Consiste numa API bancária onde podem ser feitas transações bancárias entre contas pertencentes ao sistema.
 
+A implementação completa junto à documentação do restante do código pode ser vista na branch [api-implementation](https://github.com/zoedsoupe/liquid-template/tree/api-implementation).
+
 ### Regras de negócio
 
 1. Uma transação apenas poderá ser processada caso haja aldo suficiente na conta da pessoa usuária que está enviando o montante.
@@ -78,6 +80,19 @@ type Transaction {
 - `DELETE` `/api/transactions/:id`: Cancela uma transação já processada e estorna os valores transacionados para as contas envolvidas.
 
 ## Descrição do App Web
+
+Consiste numa aplicação Phoenix Live View onde será possível:
+
+- cadastrar novas contas bancárias com validações em tempo real dos formulários;
+- fazer login;
+- ter um dashboard para gerenciamento do saldo;
+- ver o extrato das suas transações;
+- transferir quantias para outras contas;
+- estornar uma transação realizada por vc;
+
+A implementação completa junto à documentação do restante do código pode ser vista na branch [web-implementation](https://github.com/zoedsoupe/liquid-template/tree/web-implementation).
+
+O Figma do projeto pode ser encontrato no seguinte [link](https://www.figma.com/file/bNrUnj8JrQKR03pCl8TJdA/Untitled?type=design&node-id=0%3A1&mode=design&t=lI62KJWa2VOeIRVE-1).
 
 ## Como usar
 
