@@ -151,6 +151,17 @@ Video sobre Live View: [](./assets/what_is_lvie_view.mp4)
 
 <!-- end_slide -->
 
+Repl.it
+---
+
+Para quem quiser me acompanhar e tentar implementar a própria versão, siga pelo link:
+
+- https://replit.com/@zoedsoupe/liquid-template
+
+Caso queira testar "ao vivo", acesse: https://liquid-api.fly.dev
+
+<!-- end_slide -->
+
 Liquid Bank Web
 ---
 
@@ -781,3 +792,15 @@ Liquid Bank Web
   end
 # ...
 ```
+
+<!-- end_slide -->
+
+Referências e Links
+---
+
+- [Documentação Phoenix Live View](https://hexdocs.pm/phoenix_live_view)
+- [Elixir school sobre Live View](https://elixirschool.com/blog/phoenix-live-view)
+- [Elixircasts Live View](https://elixircasts.io/series/phoenix-live-view)
+- [Alchemist.camp](https://alchemist.camp/tagged/LiveView/)
+- [Programming Phoenix Live View PragProg](https://pragprog.com/titles/liveview/programming-phoenix-liveview/)
+- [Productive Programmer with Phoenix 1.7](https://elixirforum.com/t/productive-programmer-phoenix-1-7-liveview-course/53120)
