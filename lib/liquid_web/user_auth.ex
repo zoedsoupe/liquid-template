@@ -21,7 +21,7 @@ defmodule LiquidWeb.UserAuth do
   disconnected on log out. The line can be safely removed
   if you are not using LiveView.
   """
-  def log_in_user(conn, user) do
+  def log_in_user(conn, {:ok, user}) do
     token = Phoenix.Token.sign(LiquidWeb.Endpoint, salt(), user.id, max_age: 86_400)
     user_return_to = get_session(conn, :user_return_to)
 

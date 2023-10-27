@@ -1,0 +1,10 @@
+{
+  "name": "Liquid Web Bank App",
+  "short_name": "liquid-web-app",
+  "theme_color": "#ffb02e",
+  "background_color": "#121212",
+  "display": "browser",
+  "orientation": "portrait",
+  "scope": "/login",
+  "start_url": "/"
+}

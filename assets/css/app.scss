@@ -45,6 +45,18 @@ body {
   align-items: center;
 }
 
+.flex-start {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -67,13 +79,29 @@ body {
   flex: 1 0 0;
 }
 
+.btn-action {
+  @extend .btn;
+  max-width: 9rem !important;
+  height: 3rem;
+  color: $white;
+  padding: 1rem;
+  background-color: $light-black;
+  text-decoration: none;
+}
+
 .btn-primary {
   background-color: $orange;
 }
 
 .btn-secondary {
+  background-color: transparent;
   border: 1px solid $white;
   color: $white;
+}
+
+.btn-sm {
+  width: 4.1875rem;
+  height: 1.5625rem;
 }
 
 .btn-md {
@@ -94,7 +122,7 @@ body {
 
 .input {
   @extend .no-appearance;
-  @extend .text-xl;
+  width: 19.5rem;
   background-color: transparent;
   padding: 1rem 0.5rem;
   align-self: stretch;
@@ -122,27 +150,32 @@ body {
 
 .text-xs {
   font-size: 0.625rem;
+  line-height: 1.25rem;
 }
 
 .text-sm {
   font-size: 0.75rem;
-
+  line-height: 1.25rem;
 }
 
 .text-md {
   font-size: 0.875rem;
+  line-height: normal;
 }
 
 .text-lg {
   font-size: 1.0rem;
+  line-height: 1.5rem;
 }
 
 .text-xl {
   font-size: 1.5rem;
+  line-height: normal;
 }
 
-.text-xl {
+.text-2xl {
   font-size: 2rem;
+  line-height: normal;
 }
 
 .form {
@@ -155,9 +188,17 @@ body {
 .user-profile-container {
   @extend .flex-center;
   border-radius: 7.3rem;
+  background-color: $orange;
+}
+
+.user-profile-lg {
   width: 7.38rem;
   height: 7.375rem;
-  background-color: $orange;
+}
+
+.user-profile-sm {
+  width: 2rem;
+  height: 2rem;
 }
 
 .text-black {
@@ -168,7 +209,151 @@ body {
   color: $white;
 }
 
+.text-gray {
+  color: #8C8C8C;
+}
+
+.text-orange {
+  color: $orange;
+}
+
 .icon {
   width: 50%;
   height: 50%;
+}
+
+.default-padding {
+  padding: 3.38rem 1.5rem;
+}
+
+.h-1 {
+  height: 1rem;
+}
+
+.h-1-5 {
+  height: 1.5rem;
+}
+
+.w-1 {
+  width: 1rem;
+}
+
+.w-1-5 {
+  width: 1.5rem;
+}
+
+.profile-navbar {
+  @extend .w-full;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.balance-summary {
+  @extend .w-full;
+  @extend .flex-between;
+  border-bottom: 1px solid $light-black;
+  padding: 0 1.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.tab-active {
+  border-bottom: 1px solid $white;
+}
+
+.badge {
+  display: inline-flex;
+  padding: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 0.25rem;
+  border: 1px solid #595959;
+  color: #595959;
+}
+
+.transaction-list {
+  @extend .flex-center;
+  @extend .flex-col;
+}
+
+.transaction {
+  @extend .flex-between;
+  width: 20rem;
+  margin-bottom: 1rem;
+}
+
+.transaction-icon {
+  @extend .flex-center;
+  border-radius: 50%;
+  background-color: #1e1e1e;
+  width: 2rem;
+  height: 2rem;
+
+  svg {
+    wdith: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+.contact-list {
+  @extend .flex-start;
+  @extend .flex-col;
+  @extend .w-full;
+}
+
+.contact {
+  @extend .w-full;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.search-input {
+  @extend .flex-between;
+  color: $white;
+  align-self: stretch;
+  height: 2.5rem;
+  width: 19.5rem;
+  padding: 1rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1.5px solid $light-black;
+  background: #1E1E1E;
+}
+
+.transaction-modal {
+  @extend .w-full;
+  display: flex;
+  height: 60%;
+  padding: 1.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-shrink: 0;
+  background: #1E1E1E;
+  position: fixed;
+  bottom: 0;
+  overflow-y: auto;
+
+  input {
+    font-size: 2.5rem;
+  }
+}
+
+.transaction-badge {
+  display: inline-flex;
+  padding: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid $black;
+  background-color: $white;
+  position: absolute;
+  inset: 0 calc(50% - 2.3rem);
+  top: 13.75rem;
+  height: 1.5rem;
+  width: 4.135rem;
+  z-index: 50;
 }

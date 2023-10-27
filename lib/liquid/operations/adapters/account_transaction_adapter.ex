@@ -15,6 +15,8 @@ defmodule Liquid.Operations.Adapters.AccountTransactionAdapter do
     with {:ok, sender} <- UserAccountAdapter.internal_to_external(sender_user, sender),
          {:ok, receiver} <- UserAccountAdapter.internal_to_external(receiver_user, receiver) do
       AccountTransaction.parse(%{
+        type: to_string(transaction.type || "expense"),
+        status: to_string(transaction.status),
         identifier: transaction.id,
         amount: format_balance(transaction.amount),
         processed_at: maybe_naive_date_time(transaction.processed_at),

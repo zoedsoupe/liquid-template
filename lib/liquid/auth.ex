@@ -25,7 +25,17 @@ defmodule Liquid.Auth do
   end
 
   def fetch_user(id) do
-    query = from(u in User, select: u, where: u.id == ^id)
+    query = from(u in User, where: u.id == ^id, preload: [:bank_account])
+
+    if user = Repo.one(query) do
+      {:ok, user}
+    else
+      {:error, :not_found}
+    end
+  end
+
+  def fetch_user_by_cpf(cpf) do
+    query = from u in User, where: u.cpf == ^cpf, preload: [:bank_account]
 
     if user = Repo.one(query) do
       {:ok, user}
@@ -35,7 +45,7 @@ defmodule Liquid.Auth do
   end
 
   def fetch_user_by_cpf_and_password(cpf, password) do
-    query = from(u in User, select: u, where: u.cpf == ^cpf)
+    query = from(u in User, where: u.cpf == ^cpf, preload: [:bank_account])
     maybe_user = Repo.one(query)
 
     if maybe_user && Bcrypt.verify_pass(password, maybe_user.hash_password) do
@@ -53,7 +63,11 @@ defmodule Liquid.Auth do
 
   defdelegate delete_user(user), to: Repo, as: :delete
 
-  def change_user_registration(%User{} = user, params \\ %{}) do
-    User.register_changeset(user, params)
+  def change_user_registration(%User{} = user, params \\ %{}, mode \\ :register) do
+    if mode == :register do
+      User.register_changeset(user, params)
+    else
+      User.update_changeset(user, params)
+    end
   end
 end

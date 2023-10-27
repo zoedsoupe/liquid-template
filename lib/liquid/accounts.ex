@@ -90,7 +90,11 @@ defmodule Liquid.Accounts do
     |> Repo.insert()
   end
 
-  defdelegate delete_account(account), to: Repo, as: :delete
+  def delete_account(account) do
+    with {:ok, _user} <- Auth.delete_user(account.owner) do
+      Repo.delete(account)
+    end
+  end
 
   def transfer_amount_between_accounts(sender, receiver, amount) do
     sender_attrs = withdrawl_amount(sender, amount)

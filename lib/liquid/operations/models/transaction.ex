@@ -9,7 +9,7 @@ defmodule Liquid.Operations.Models.Transaction do
   @status ~w[pending failed success]a
   @reasons ~w[invalid_params invalid_sender same_account insufficient_funds]a
 
-  @required_fields ~w[amount status sender_id receiver_id]a
+  @required_fields ~w[amount status sender_id receiver_id type]a
   @optional_fields ~w[processed_at chargebacked_at error_reason]a
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -19,6 +19,7 @@ defmodule Liquid.Operations.Models.Transaction do
     field(:chargebacked_at, :naive_datetime)
     field(:status, Ecto.Enum, values: @status, default: :pending)
     field :error_reason, Ecto.Enum, values: @reasons
+    field :type, Ecto.Enum, values: ~w[expense income]a
 
     belongs_to(:sender, BankAccount, type: :binary_id)
     belongs_to(:receiver, BankAccount, type: :binary_id)

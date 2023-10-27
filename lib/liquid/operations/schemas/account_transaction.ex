@@ -7,6 +7,8 @@ defmodule Liquid.Operations.Schemas.AccountTransaction do
 
   alias Liquid.Accounts.Schemas.UserAccount
 
+  @fields ~w[amount status type processed_at chargebacked_at identifier error]a
+
   @derive Jason.Encoder
   @primary_key false
   embedded_schema do
@@ -15,6 +17,8 @@ defmodule Liquid.Operations.Schemas.AccountTransaction do
     field(:processed_at, :string)
     field(:chargebacked_at, :string)
     field :error, :string
+    field :status, :string
+    field :type, :string
 
     embeds_one(:sender, UserAccount)
     embeds_one(:receiver, UserAccount)
@@ -22,10 +26,10 @@ defmodule Liquid.Operations.Schemas.AccountTransaction do
 
   def parse(params) do
     %__MODULE__{}
-    |> cast(params, [:amount, :processed_at, :chargebacked_at, :identifier, :error])
+    |> cast(params, @fields)
     |> put_embed(:sender, params[:sender], required: true)
     |> put_embed(:receiver, params[:receiver], required: true)
-    |> validate_required([:amount, :identifier])
+    |> validate_required([:amount, :identifier, :status, :type])
     |> apply_action(:parse)
   end
 end

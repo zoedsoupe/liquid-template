@@ -3,7 +3,7 @@ defmodule LiquidWeb.Endpoint do
 
   @session_options [
     store: :cookie,
-    key: "_pescarte_key",
+    key: "_liquid_web_key",
     signing_salt: "7ZI1IH1h"
   ]
 

@@ -18,7 +18,7 @@ defmodule LiquidWeb do
   """
 
   def static_paths do
-    ~w(assets fonts images favicon.ico servive-worker.js)
+    ~w(assets fonts images favicon.ico servive-worker.js manifest.json)
   end
 
   def router do

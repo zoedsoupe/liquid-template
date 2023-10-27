@@ -16,22 +16,24 @@ defmodule Liquid.Operations do
 
   defdelegate delete_transaction(transaction), to: Repo, as: :delete
 
+  defp base_query do
+    from(t in Transaction,
+      join: s in assoc(t, :sender),
+      join: su in assoc(s, :owner),
+      join: r in assoc(t, :receiver),
+      join: ru in assoc(r, :owner),
+      select: %{
+        transaction: t,
+        sender: s,
+        receiver: r,
+        sender_owner: su,
+        receiver_owner: ru
+      }
+    )
+  end
+
   def fetch_transaction(id, mode \\ :model) do
-    query =
-      from(t in Transaction,
-        join: s in assoc(t, :sender),
-        join: su in assoc(s, :owner),
-        join: r in assoc(t, :receiver),
-        join: ru in assoc(r, :owner),
-        where: t.id == ^id,
-        select: %{
-          transaction: t,
-          sender: s,
-          receiver: r,
-          sender_owner: su,
-          receiver_owner: ru
-        }
-      )
+    query = base_query() |> where([t], t.id == ^id)
 
     payload = Repo.one(query)
 
@@ -42,23 +44,32 @@ defmodule Liquid.Operations do
     end
   end
 
+  def list_transactions_by_processed_at(account_id) do
+    base_query()
+    |> where([t], t.sender_id == ^account_id)
+    |> Repo.all()
+    |> Enum.map(&internal_to_external/1)
+    |> Enum.reduce_while([], fn
+      {:ok, transaction}, acc -> {:cont, [transaction | acc]}
+      {:error, changeset}, _ -> {:halt, changeset}
+    end)
+    |> Enum.sort_by(& &1.processed_at, :desc)
+    |> Enum.group_by(fn transaction ->
+      if processed_at = transaction.processed_at do
+        processed_at = NaiveDateTime.from_iso8601!(processed_at)
+        %{day: day, month: month, year: year} = processed_at
+        Date.new!(year, month, day)
+      else
+        nil
+      end
+    end)
+  end
+
   def list_transactions(from, to) do
     query =
-      from(t in Transaction,
-        join: s in assoc(t, :sender),
-        join: su in assoc(s, :owner),
-        join: r in assoc(t, :receiver),
-        join: ru in assoc(r, :owner),
-        where: t.processed_at >= ^from,
-        where: t.processed_at <= ^to,
-        select: %{
-          transaction: t,
-          sender: s,
-          receiver: r,
-          sender_owner: su,
-          receiver_owner: ru
-        }
-      )
+      base_query()
+      |> where([t], t.processed_at >= ^from)
+      |> where([t], t.processed_at <= ^to)
 
     Repo.all(query)
     |> Enum.map(&internal_to_external/1)
@@ -69,6 +80,10 @@ defmodule Liquid.Operations do
   end
 
   def schedule_new_transaction(params, %BankAccount{} = current_account) do
+    params = params |> Enum.map(fn {k, v} -> {to_string(k), v} end) |> Map.new()
+    type = if current_account.id == params["sender_id"], do: :expense, else: :income
+    params = Map.put(params, "type", type)
+
     with {:ok, transaction} <- create_transaction(params),
          {:ok, event} <- internal_to_event(transaction, current_account) do
       Consumer.process_transaction(event)

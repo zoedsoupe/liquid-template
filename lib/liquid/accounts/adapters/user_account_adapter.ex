@@ -5,6 +5,7 @@ defmodule Liquid.Accounts.Adapters.UserAccountAdapter do
 
   def internal_to_external(%User{} = user, %BankAccount{} = account) do
     params = %{
+      owner_cpf: user.cpf,
       owner_name: format_name(user),
       balance: format_balance(account.balance),
       identifier: account.id

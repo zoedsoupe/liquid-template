@@ -37,17 +37,29 @@ body {
   margin: 0 auto;
 }
 
-.flex-center, .user-profile-container, .btn {
+.flex-center, .transaction-icon, .transaction-list, .user-profile-container, .btn, .btn-action {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.flex-col {
+.flex-start, .contact-list {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.flex-between, .search-input, .transaction, .balance-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-col, .contact-list, .transaction-list {
   flex-direction: column;
 }
 
-.w-full {
+.w-full, .transaction-modal, .contact, .contact-list, .balance-summary, .profile-navbar {
   width: 100%;
 }
 
@@ -55,7 +67,7 @@ body {
   height: 100%;
 }
 
-.btn {
+.btn, .btn-action {
   border-radius: 0.25rem;
   padding: 0.75rem 0.625rem;
   cursor: pointer;
@@ -64,13 +76,28 @@ body {
   flex: 1 0 0;
 }
 
+.btn-action {
+  max-width: 9rem !important;
+  height: 3rem;
+  color: #fff;
+  padding: 1rem;
+  background-color: #2d2d2d;
+  text-decoration: none;
+}
+
 .btn-primary {
   background-color: #ffb02e;
 }
 
 .btn-secondary {
+  background-color: transparent;
   border: 1px solid #fff;
   color: #fff;
+}
+
+.btn-sm {
+  width: 4.1875rem;
+  height: 1.5625rem;
 }
 
 .btn-md {
@@ -90,6 +117,7 @@ body {
 }
 
 .input {
+  width: 19.5rem;
   background-color: transparent;
   padding: 1rem 0.5rem;
   align-self: stretch;
@@ -116,26 +144,32 @@ body {
 
 .text-xs {
   font-size: 0.625rem;
+  line-height: 1.25rem;
 }
 
 .text-sm {
   font-size: 0.75rem;
+  line-height: 1.25rem;
 }
 
 .text-md {
   font-size: 0.875rem;
+  line-height: normal;
 }
 
 .text-lg, .label {
   font-size: 1rem;
+  line-height: 1.5rem;
 }
 
-.text-xl, .input {
+.text-xl {
   font-size: 1.5rem;
+  line-height: normal;
 }
 
-.text-xl, .input {
+.text-2xl {
   font-size: 2rem;
+  line-height: normal;
 }
 
 .form {
@@ -147,9 +181,17 @@ body {
 
 .user-profile-container {
   border-radius: 7.3rem;
+  background-color: #ffb02e;
+}
+
+.user-profile-lg {
   width: 7.38rem;
   height: 7.375rem;
-  background-color: #ffb02e;
+}
+
+.user-profile-sm {
+  width: 2rem;
+  height: 2rem;
 }
 
 .text-black {
@@ -160,9 +202,132 @@ body {
   color: #fff;
 }
 
+.text-gray {
+  color: #8C8C8C;
+}
+
+.text-orange {
+  color: #ffb02e;
+}
+
 .icon {
   width: 50%;
   height: 50%;
+}
+
+.default-padding {
+  padding: 3.38rem 1.5rem;
+}
+
+.h-1 {
+  height: 1rem;
+}
+
+.h-1-5 {
+  height: 1.5rem;
+}
+
+.w-1 {
+  width: 1rem;
+}
+
+.w-1-5 {
+  width: 1.5rem;
+}
+
+.profile-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.balance-summary {
+  border-bottom: 1px solid #2d2d2d;
+  padding: 0 1.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.tab-active {
+  border-bottom: 1px solid #fff;
+}
+
+.badge {
+  display: inline-flex;
+  padding: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 0.25rem;
+  border: 1px solid #595959;
+  color: #595959;
+}
+
+.transaction {
+  width: 20rem;
+  margin-bottom: 1rem;
+}
+
+.transaction-icon {
+  border-radius: 50%;
+  background-color: #1e1e1e;
+  width: 2rem;
+  height: 2rem;
+}
+.transaction-icon svg {
+  wdith: 1.5rem;
+  height: 1.5rem;
+}
+
+.contact {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.search-input {
+  color: #fff;
+  align-self: stretch;
+  height: 2.5rem;
+  width: 19.5rem;
+  padding: 1rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1.5px solid #2d2d2d;
+  background: #1E1E1E;
+}
+
+.transaction-modal {
+  display: flex;
+  height: 60%;
+  padding: 1.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-shrink: 0;
+  background: #1E1E1E;
+  position: fixed;
+  bottom: 0;
+  overflow-y: auto;
+}
+.transaction-modal input {
+  font-size: 2.5rem;
+}
+
+.transaction-badge {
+  display: inline-flex;
+  padding: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #121212;
+  background-color: #fff;
+  position: absolute;
+  inset: 0 calc(50% - 2.3rem);
+  top: 13.75rem;
+  height: 1.5rem;
+  width: 4.135rem;
+  z-index: 50;
 }
 
 /*# sourceMappingURL=app.css.map */

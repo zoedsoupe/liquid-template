@@ -2,6 +2,8 @@ defmodule Liquid.Auth.Models.User do
   # módudo que define DSL                               
   use Ecto.Schema
 
+  import Brcpfcnpj.Changeset, only: [validate_cpf: 2]
+
   # módulo que define funções de validação        
   import Ecto.Changeset
 
@@ -16,6 +18,8 @@ defmodule Liquid.Auth.Models.User do
     field(:hash_password, :string)
     field(:password, :string, virtual: true, redact: true)
 
+    has_one :bank_account, Liquid.Accounts.Models.BankAccount, foreign_key: :owner_id
+
     timestamps()
   end
 
@@ -27,6 +31,7 @@ defmodule Liquid.Auth.Models.User do
     user
     |> changeset(attrs)
     |> validate_required(~w[cpf first_name password]a)
+    |> validate_cpf(:cpf)
     |> unique_constraint(:cpf)
     |> put_hash_senha()
   end
@@ -34,6 +39,7 @@ defmodule Liquid.Auth.Models.User do
   def update_changeset(%__MODULE__{} = user, attrs) do
     user
     |> changeset(attrs)
+    |> validate_cpf(:cpf)
     |> unique_constraint(:cpf)
     |> put_hash_senha()
   end

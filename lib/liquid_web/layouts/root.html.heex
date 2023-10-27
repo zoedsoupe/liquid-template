@@ -25,13 +25,4 @@
     </script>
   </head>
   <%= @inner_content %>
-  <script>
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.register('/service_worker.js', { scope: './' })
-        .then(function(reg) {
-          console.log('[ServiceWorker]', 'Service worker registered!');
-          console.log(reg);
-      });
-    }
-  </script>
 </html>

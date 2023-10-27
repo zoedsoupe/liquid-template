@@ -39,6 +39,9 @@ defmodule Liquid.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.20"},
       {:phoenix_html, "~> 3.3"},
+      {:money, "~> 1.2"},
+      {:timex, "~> 3.7"},
+      {:brcpfcnpj, "~> 1.0.0"},
       {:floki, "~> 0.35"},
       {:bandit, "~> 0.6"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
@@ -55,7 +58,7 @@ defmodule Liquid.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"],
+      "assets.deploy": ["sass default", "esbuild default --minify", "phx.digest"],
       "assets.setup": ["sass default", "esbuild default"]
     ]
   end

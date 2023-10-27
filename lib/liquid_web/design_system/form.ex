@@ -58,7 +58,7 @@ defmodule LiquidWeb.DesignSystem.Form do
   attr(:name, :any)
   attr(:label, :string, default: nil)
   attr(:value, :any, default: nil)
-  attr(:type, :string, default: "text", values: ~w(password date hidden number text))
+  attr(:type, :string, default: "text", values: ~w(password date hidden number text tel))
   attr(:field, Phoenix.HTML.FormField)
   attr(:errors, :list, default: [])
 
@@ -96,7 +96,8 @@ defmodule LiquidWeb.DesignSystem.Form do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        required={@required}
+        required={Map.get(assigns, :required)}
+        disabled={Map.get(assigns, :disabled)}
         placeholder={Map.get(assigns, :placeholder)}
         class="input"
       />

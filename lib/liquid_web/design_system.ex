@@ -91,9 +91,9 @@ defmodule LiquidWeb.DesignSystem do
   """
   attr(:style, :string, default: "primary", values: ~w(primary secondary))
   attr(:type, :string, default: "button", values: ~w(button submit reset))
-  attr :size, :string, values: ~w(md lg), default: "md"
+  attr :size, :string, values: ~w(sm md lg), default: "md"
   attr(:class, :string, default: nil)
-  attr(:rest, :global, include: ~w(disabled form name value))
+  attr(:rest, :global, include: ~w(disabled form name value phx-click))
 
   slot(:inner_block, required: true)
 
@@ -157,24 +157,13 @@ defmodule LiquidWeb.DesignSystem do
     """
   end
 
-  @doc """
-  Renders a back navigation link.
+  attr :size, :string, values: ~w[lg sm], default: "lg"
 
-  ## Examples
-
-      <.back navigate={~p"/posts"}>Back to posts</.back>
-  """
-  attr(:navigate, :any, required: true)
-  slot(:inner_block, required: true)
-
-  def back(assigns) do
+  def user_profile(assigns) do
     ~H"""
-    <div class="">
-      <.link navigate={@navigate} class="">
-        <Lucideicons.arrow_left class="h-3 w-3" />
-        <%= render_slot(@inner_block) %>
-      </.link>
-    </div>
+      <span style={@size == "lg" && "mergin-bottom: 3.2rem;"} class={["user-profile-container", "user-profile-#{@size}"]}>
+       <Lucideicons.user class="icon text-black" />
+      </span>
     """
   end
 

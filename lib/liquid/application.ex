@@ -8,8 +8,8 @@ defmodule Liquid.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      {Phoenix.PubSub, name: Liquid.PubSub},
       Liquid.Repo,
-      {Phoenix.PubSub, name: Liquid.Pubsub},
       LiquidWeb.Endpoint,
       Liquid.Operations.Consumer
     ]

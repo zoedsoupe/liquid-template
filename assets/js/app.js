@@ -1,10 +1,35 @@
 import "phoenix_html";
-import Inputmask from "inputmask";
+import {Maskito, MaskitoOptions} from '@maskito/core';
+import {maskitoNumberOptionsGenerator} from '@maskito/kit';
+ 
+
+window.addEventListener("phx:mask-input", _e => {
+  const amountMask = maskitoNumberOptionsGenerator({
+      decimalZeroPadding: true,
+      precision: 2,
+      decimalSeparator: ',',
+      min: 0,
+      prefix: 'R$',
+  });
+
+  const amount = document.querySelector("#amount");
+  if (amount) {
+    new Maskito(amount, amountMask);
+  }
+})
 
 const cpf = document.querySelector("#user_cpf");
-
-// input masks
-if (cpf) Inputmask({ mask: "999.999.999-99" }).mask(cpf);
+if (cpf) {
+  new Maskito(cpf, {mask: [
+    ...new Array(3).fill(/\d/),
+    ".",
+    ...new Array(3).fill(/\d/),
+    ".",
+    ...new Array(3).fill(/\d/),
+    "-",
+    ...new Array(2).fill(/\d/)
+  ]});
+}
 
 // live view
 import { Socket } from "phoenix";
@@ -15,7 +40,6 @@ let csrfToken = document
   .getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
-  hooks: Hooks,
 });
 
 // Connect if there are any LiveViews on the page
