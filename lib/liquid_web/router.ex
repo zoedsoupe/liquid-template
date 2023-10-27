@@ -23,17 +23,24 @@ defmodule LiquidWeb.Router do
   scope "/", LiquidWeb do
     pipe_through :browser
 
-    live("/", UserRegistrationLive, :render)
-    live("/design-system", DesignSystemLive, :render)
+    post "/login", UserSessionController, :create
+    delete "/logout", UserSessionController, :delete
+
+    live("/register", UserRegistrationLive, :render)
 
     live_session :redirect_auth,
       on_mount: [{LiquidWeb.UserAuth, :redirect_if_user_is_authenticated}] do
-      live("/login", UserLoginLive, :render)
+      live("/", UserLoginLive, :render)
     end
 
     scope "/app" do
       live_session :authenticated, on_mount: [{LiquidWeb.UserAuth, :ensure_authenticated}] do
         live("/dashboard", DashboardLive, :render)
+        live "/extrato", ExtratoLive, :render
+        live "/profile", UserProfileLive, :render
+        live "/transactions/new", NewTransactionLive, :render
+        live "/transactions/:id", TransactionSummaryLive, :render
+        live "/transactions/review/:id", ReviewTransactionLive, :render
       end
     end
   end

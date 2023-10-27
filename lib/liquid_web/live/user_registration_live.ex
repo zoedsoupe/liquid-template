@@ -7,10 +7,8 @@ defmodule LiquidWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="flex-center flex-col w-full">
-      <span class="user-profile-container">
-       <Lucideicons.user class="icon text-black" />
-      </span>
+    <div class="flex-center flex-col w-full default-padding">
+      <DesignSystem.user_profile size="lg" />
 
       <Form.render
         for={@form}
@@ -20,19 +18,19 @@ defmodule LiquidWeb.UserRegistrationLive do
         phx-trigger-action={@trigger_submit}
         action={~p"/accounts/log_in?_action=registered"}
         method="post"
-    class="w-full"
+        class="w-full"
       >
         <Form.error :if={@check_errors}>
           Parece que alguns campos são inválidos, confirme os dados abaixo!
         </Form.error>
 
-        <Form.input field={@form[:cpf]} id="user_cpf" type="text" label="Seu CPF" placeholder="000.000.000-00" required />
+        <Form.input field={@form[:cpf]} id="user_cpf" type="text" label="Seu CPF" placeholder="000.000.000-00" class="text-md" required />
         <Form.input field={@form[:first_name]} type="text" label="Primeiro nome" required />
         <Form.input field={@form[:last_name]} type="text" label="Sobrenome" required />
         <Form.input field={@form[:password]} type="password" label="Sua Senha" required />
 
         <:actions>
-          <.button size="lg" class="text-lg" phx-disable-with="Criando conta...">Cadastrar Conta</.button>
+          <.button type="submit" size="lg" class="text-lg" phx-disable-with="Criando conta...">Cadastrar Conta</.button>
         </:actions>
       </Form.render>
     </div>
@@ -51,13 +49,16 @@ defmodule LiquidWeb.UserRegistrationLive do
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Accounts.register_account(user_params) do
-      {:ok, user} ->
-        changeset = Auth.change_user_registration(user)
-        {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
-
+    with {:ok, account} <- Accounts.register_account(user_params),
+         {:ok, user} <- Auth.fetch_user_by_cpf(account.owner_cpf) do
+      changeset = Auth.change_user_registration(user)
+      {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
+    else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+
+      {:error, :not_found} ->
+        {:noreply, redirect(socket, ~p"/")}
     end
   end
 

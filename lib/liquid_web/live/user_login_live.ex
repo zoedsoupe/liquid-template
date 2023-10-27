@@ -3,35 +3,29 @@ defmodule LiquidWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">
-        Sign in to account
-        <:subtitle>
-          Don't have an account?
-          <.link navigate={~p"/"} class="font-semibold text-brand hover:underline">
-            Sign up
-          </.link>
-          for an account now.
-        </:subtitle>
-      </.header>
+    <div class="flex-center flex-col w-full default-padding">
+      <DesignSystem.user_profile size="lg" />
 
       <Form.render for={@form} id="login_form" action={~p"/login"} phx-update="ignore">
-        <Form.input field={@form[:email]} id="user_cpf" type="text" label="Email" required />
+        <Form.input field={@form[:cpf]} id="user_cpf" type="text" label="CPF" required />
         <Form.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.button phx-disable-with="Acessando..." class="w-full">
-            Sign in <span aria-hidden="true">→</span>
+          <.button type="submit" style="primary" size="lg" class="text-lg" phx-disable-with="Acessando...">
+            Entrar
           </.button>
         </:actions>
+
+          <.link navigate={~p"/register"} class="text-white text-md">
+            Não possui conta? Cadastre-se já!
+          </.link>
       </Form.render>
     </div>
     """
   end
 
   def mount(_params, _session, socket) do
-    email = live_flash(socket.assigns.flash, :email)
-    form = to_form(%{"email" => email}, as: "user")
+    form = to_form(%{}, as: "user")
     {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
   end
 end
