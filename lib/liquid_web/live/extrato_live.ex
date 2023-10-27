@@ -8,11 +8,20 @@ defmodule LiquidWeb.ExtratoLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    account = socket.assigns.current_user.bank_account
+    transactions = Operations.list_transactions_by_processed_at(account.id)
+    {:ok, assign(socket, transactions: transactions, current_tab: "all")}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
+     <div class="flex-center flex-col w-full" style="gap: 1.75rem;">
+       <Extrato.navbar />
+       <Dashboard.balance amount={@current_user.bank_account.balance} />
+       <Extrato.tabs current={@current_tab} />
+       <Extrato.receipt transactions={@transactions} />
+     </div>
     """
   end
 

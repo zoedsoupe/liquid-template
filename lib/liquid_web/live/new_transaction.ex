@@ -6,11 +6,18 @@ defmodule LiquidWeb.NewTransactionLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    accounts = Accounts.list_bank_account()
+    {:ok, assign(socket, accounts: accounts)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
+      <div class="flex-center flex-col w-full" style="gap: 2rem;">
+        <Transaction.navbar />
+        <Transaction.search_input />
+        <Transaction.contact_list accounts={@accounts} />
+      </div>
     """
   end
 
